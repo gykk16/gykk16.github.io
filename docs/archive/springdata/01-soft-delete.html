@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Migrate to Spring Boot 3</title>
+<title>JPA Soft Delete (Hibernate 6.4)</title>
 <style>
 
 html {
@@ -1340,21 +1340,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_migrate_to_spring_boot_3">1. Migrate to Spring Boot 3</a>
+<li><a href="#_jpa_soft_delete_hibernate_6_4">1. JPA Soft Delete (Hibernate 6.4)</a>
 <ul class="sectlevel2">
 <li><a href="#_참고_자료">1.1. 참고 자료</a></li>
-<li><a href="#_들어가며">1.2. 들어가며</a></li>
-<li><a href="#_주요_변경_내용">1.3. 주요 변경 내용</a></li>
-<li><a href="#_web_application_변경_내용">1.4. Web Application 변경 내용</a></li>
-<li><a href="#_spring_security_변경_내용">1.5. Spring Security 변경 내용</a></li>
-<li><a href="#_spring_data_jpa_변경_내용">1.6. Spring Data Jpa 변경 내용</a></li>
-</ul>
-</li>
-<li><a href="#_migrate_to_spring_boot_3_2">2. Migrate to Spring Boot 3.2</a>
-<ul class="sectlevel2">
-<li><a href="#_참고_자료_2">2.1. 참고 자료</a></li>
-<li><a href="#_parameter_name_discovery">2.2. Parameter Name Discovery</a></li>
-<li><a href="#_spring_data_jpa_변경_내용_2">2.3. Spring Data Jpa 변경 내용</a></li>
+<li><a href="#_hibernate_6_4_이전의_soft_delete">1.2. Hibernate 6.4 이전의 Soft Delete</a></li>
+<li><a href="#_hibernate_6_4_soft_delete">1.3. Hibernate 6.4 Soft Delete</a></li>
 </ul>
 </li>
 </ul>
@@ -1362,50 +1352,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_migrate_to_spring_boot_3"><a class="anchor" href="#_migrate_to_spring_boot_3"></a>1. Migrate to Spring Boot 3</h2>
+<h2 id="_jpa_soft_delete_hibernate_6_4"><a class="anchor" href="#_jpa_soft_delete_hibernate_6_4"></a>1. JPA Soft Delete (Hibernate 6.4)</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_참고_자료"><a class="anchor" href="#_참고_자료"></a>1.1. 참고 자료</h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes">Spring Boot 3.0 Release Notes</a></p>
-</li>
-<li>
-<p><a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.1-Release-Notes">Spring Boot 3.1 Release Notes</a></p>
-</li>
-<li>
-<p><a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide">Spring Boot 3.0 Migration Guide</a></p>
-</li>
-<li>
-<p><a href="https://docs.spring.io/spring-boot/docs/3.0.x/reference/html/dependency-versions.html#appendix.dependency-versions">Spring Boot 3.0 Dependency Versions</a></p>
-</li>
-<li>
-<p><a href="https://spring.io/projects/spring-boot/#support">Spring Boot Support Policy</a></p>
-</li>
-<li>
-<p><a href="https://www.baeldung.com/spring-boot-3-migration">Baeldung: Migrate Application From Spring Boot 2 to Spring Boot 3</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_들어가며"><a class="anchor" href="#_들어가며"></a>1.2. 들어가며</h3>
-<div class="paragraph">
-<p>회사에서 신규 프로젝트를 개발하면 Spring Boot 2 를 기반으로 개발을 진행해 왔는데요, Spring Boot 3.0 이 출시되면서 Spring Boot 2 로 개발 진행중인 프로젝트를 Spring Boot 3 으로 마이그레이션 했습니다.
-Spring Boot 2 는 2.7 버전을 마지막으로 2023년 11월에 지원이 종료되었습니다.
-이에 맞춰 진행중인 프로젝트를 포함해 새로 시작하는 프로젝트는 Spring Boot 3 으로 개발했습니다.</p>
-</div>
-<div class="paragraph">
-<p>운영 환경에 배포되어 서비스 중인 시스템의 Spring Boot 메이저 버전을 올리는 것은 쉽지 않습니다.
-지원하는 자바 버전에서부터 차이가 있어 서비스가 배포되기 전에 적용해야 추후 문제가 발생하지 않을 것이라 생각했습니다.
-이렇게 해서 작년에 개발한 2개의 프로젝트는 Spring Boot 3.1 로 안정적으로 운영되고 있습니다.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_주요_변경_내용"><a class="anchor" href="#_주요_변경_내용"></a>1.3. 주요 변경 내용</h3>
-<div class="sect3">
-<h4 id="_java_17_baseline"><a class="anchor" href="#_java_17_baseline"></a>Java 17 Baseline</h4>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -1413,329 +1361,169 @@ Spring Boot 2 는 2.7 버전을 마지막으로 2023년 11월에 지원이 종�
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-Spring Boot 3 을 사용하기 위해서는 <strong>Java 17</strong> 이상이 필요합니다.
+<div class="paragraph">
+<p><code>@SoftDelete</code> 어노테이션은 Hibernate 6.4 부터 지원하는 신규 어노테이션이다.</p>
+</div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Spring Boot 3 은 Java 17 을 기준으로 개발 되었기 때문에 Java 17 이상을 사용해야 합니다.
-자바 8 또는 11 과 같은 버전을 사용주이라면 JDK 버전을 먼저 올려야 합니다.</p>
+<p>이전 버전에서는 <code>@Where</code> 어노테이션을 포함한 event-listener, filter 등을 사용하여 soft delete 를 구현했다.</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>Spring boot 는 3.2.1 버전부터 Hibernate 6.4 를 사용한다.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_참고_자료"><a class="anchor" href="#_참고_자료"></a>1.1. 참고 자료</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.jboss.org/hibernate/orm/6.4/migration-guide/migration-guide.html#soft-delete">Hibernate: 6.4 Migration Guide Soft Delete</a></p>
+</li>
+<li>
+<p><a href="https://docs.jboss.org/hibernate/orm/6.4/userguide/html_single/Hibernate_User_Guide.html#soft-delete">Hibernate: User Guide Soft Delete</a></p>
+</li>
+<li>
+<p><a href="https://www.baeldung.com/spring-jpa-soft-delete">Baeldung: How to Implement a Soft Delete with Spring JPA</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_hibernate_6_4_이전의_soft_delete"><a class="anchor" href="#_hibernate_6_4_이전의_soft_delete"></a>1.2. Hibernate 6.4 이전의 Soft Delete</h3>
 <div class="paragraph">
-<p><code>build.gradle</code> 파일에서 <code>sourceCompatibility</code> 와 <code>targetCompatibility</code> 를 자바 17 로 변경합니다.</p>
+<p><code>@SQLDelete</code> 어노테이션을 사용하여 delete 쿼리를 오버라이딩 하고, <code>@Where</code> 어노테이션을 사용하여 select 쿼리에 deleted=false 조건을 추가한다.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 1. build.gradle</div>
+<div class="title">Example 1. @Where, @SQLDelete 어노테이션 사용</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-gradle" data-lang="gradle">java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+<pre class="highlight"><code class="language-java" data-lang="java">@Entity
+@Table(name = "users")
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private boolean deleted = Boolean.FALSE;
+    // ...
 }</code></pre>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_hibernate_6_4_soft_delete"><a class="anchor" href="#_hibernate_6_4_soft_delete"></a>1.3. Hibernate 6.4 Soft Delete</h3>
+<div class="paragraph">
+<p>Hibernate 6.4 부터는 <code>@SoftDelete</code> 어노테이션을 사용하여 soft delete 를 구현할 수 있다.</p>
+</div>
+<div class="paragraph">
+<p><code>@SoftDelete</code> 어노테이션을 사용하면 <code>@SQLDelete</code> 어노테이션을 사용하지 않아도 된다.</p>
+</div>
+<div class="paragraph">
+<p>Soft delete 는 3가지 기능을 지원한다 -</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>strategy(전략)</p>
+</li>
+<li>
+<p>column(컬럼명)</p>
+</li>
+<li>
+<p>conversion(컨버터)</p>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="_strategy전략_softdeletetype"><a class="anchor" href="#_strategy전략_softdeletetype"></a>Strategy(전략) - SoftDeleteType</h4>
+<div class="paragraph">
+<p>Soft delete 를 사용하면 DB 에 저장하는 값을 2가지 방법으로 해석 할 수 있다.
+이는 SoftDeleteType enum 으로 <code>@SoftDelete(&#8230;&#8203;, strategy=ACTIVE)</code> 또는 <code>@SoftDelete(&#8230;&#8203;, strategy=DELETED)</code> 지정 한다 -</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">ACTIVE</dt>
+<dd>
+<p>active 상태의 데이터를 추적한다.
+<code>true</code> 값은 active (non-deleted) 상태를 의미하고, <code>false</code> 값은 inactive (deleted) 상태를 의미한다.</p>
+</dd>
+<dt class="hdlist1">DELETED</dt>
+<dd>
+<p>deleted 상태의 데이터를 추적한다.
+<code>true</code> 값은 deleted 상태를 의미하고, <code>false</code> 값은 non-deleted 상태를 의미한다.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_spring_framework_6"><a class="anchor" href="#_spring_framework_6"></a>Spring Framework 6</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Spring Boot 3 은 <strong>Spring Framework 6</strong> 을 사용합니다.
-</td>
-</tr>
-</table>
+<h4 id="_column컬럼명_indicator_column"><a class="anchor" href="#_column컬럼명_indicator_column"></a>Column(컬럼명) - Indicator column</h4>
+<div class="paragraph">
+<p><code>@SoftDelete#columnName</code> 속성을 사용하여 soft delete 를 저장할 컬럼명을 지정한다.</p>
+</div>
+<div class="paragraph">
+<p>기본 컬럼명은 사용하는 전략(SoftDeleteType) 에 따라 저장된다 -</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">ACTIVE</dt>
+<dd>
+<p>기본 컬럼명은 <code>active</code> 이다.</p>
+</dd>
+<dt class="hdlist1">DELETED</dt>
+<dd>
+<p>기본 컬럼명은 <code>deleted</code> 이다.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_configuration_properties"><a class="anchor" href="#_configuration_properties"></a>Configuration Properties</h4>
+<h4 id="_conversion컨버터_converter"><a class="anchor" href="#_conversion컨버터_converter"></a>Conversion(컨버터) - Converter</h4>
 <div class="paragraph">
-<p>몇가지 주요 프로퍼티가 이름 또는 위치가 변경되었습니다.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>spring.redis &#8594; spring.data.redis</p>
-</li>
-<li>
-<p>server.max.http.header.size &#8594; server.max-http-request-header-size</p>
-</li>
-<li>
-<p>spring.jpa.hibernate.use-new-id-generator 는 제거되었습니다.</p>
-</li>
-</ul>
+<p>값의 변환은 Jakarta Persistence AttributeConverter 를 사용하여 수행한다. domain-type 은 boolean 이고, relational-type 은 컨버터에 저의된 값을 따라간다; 일반적으로는 <code>BOOLEAN</code>, <code>INTEGER</code> 또는 <code>CHAR</code> 이다.</p>
 </div>
 <div class="paragraph">
-<p>자세한 내용은 Changelog 를 참고하세요.</p>
+<p>예를 들어, <code>YesNoConverter</code> 를 사용하면 <code>Y</code> 또는 <code>N</code> 값을 사용한다.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Configuration-Changelog">Spring Boot 3.0.0 Configuration Changelog</a></p>
-</li>
-<li>
-<p><a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.1.0-Configuration-Changelog">Spring Boot 3.1.0 Configuration Changelog</a></p>
-</li>
-<li>
-<p><a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2.0-Configuration-Changelog">Spring Boot 3.2.0 Configuration Changelog</a></p>
-</li>
-</ul>
+<div class="paragraph">
+<p><code>@SoftDelete#converter</code> 속성을 사용하여 컨버터를 지정한다.
+만약 converter 속성을 사용하지 않으면, Hibernate 가 DB 에 따라 컨버터를 자동으로 선택된다.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_jakarta_ee_10"><a class="anchor" href="#_jakarta_ee_10"></a>Jakarta EE 10</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Jakarta EE는 이제 <code>javax</code> 대신 <code>jakarta</code> 패키지를 사용합니다.
-</td>
-</tr>
-</table>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>참고 자료: <a href="https://www.samsungsds.com/kr/insights/java_jakarta.html">Java EE에서 Jakarta EE로의 전환</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>코드 레벨에서 사용하는 패키지명이 <code>javax</code> 에서 <code>jakarta</code> 로 변경되어야 합니다.
-Intellij IDEA 를 사용한다면 <code>javax</code> 패키지를 <code>jakarta</code> 패키지로 변경하는 <a href="https://www.jetbrains.com/guide/java/tutorials/migrating-javax-jakarta/use-migration-tool">기능</a>을 제공하고 있습니다.</p>
-</div>
+<h4 id="_entity_soft_delete_예제"><a class="anchor" href="#_entity_soft_delete_예제"></a>Entity soft delete 예제</h4>
 <div class="exampleblock">
-<div class="title">Example 2. javax &#8594; jakarta</div>
+<div class="title">Example 2. @SoftDelete 어노테이션 사용</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">// as-is
-import javax.persistence.Entity;
-
-// to-be
-import jakarta.persistence.Entity;</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_web_application_변경_내용"><a class="anchor" href="#_web_application_변경_내용"></a>1.4. Web Application 변경 내용</h3>
-<div class="sect3">
-<h4 id="_url_후행_슬래시_일치_여부"><a class="anchor" href="#_url_후행_슬래시_일치_여부"></a>URL 후행 슬래시 일치 여부</h4>
-<div class="paragraph">
-<p>Spring 6 부터 후행 슬래시 여부를 엄격하게 검사합니다.
-이전 버전에서는 "GET /foo" 와 "GET /foo/" 를 동일하게 처리했지만, Spring 6 부터는 다른 URL 로 인식합니다.</p>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@RestController
-public class FooController {
-
-    @GetMapping("/foo")
-    public String foo() {
-        return "foo";
-    }
+<pre class="highlight"><code class="language-java" data-lang="java">@Entity
+@Table(name = "users")
+@SoftDelete(columnName = "deleted", strategy = SoftDeleteType.DELETED, converter = YesNoConverter.class)
+public class User {
+    // ...
 }</code></pre>
 </div>
 </div>
 </div>
 </div>
-<div class="paragraph">
-<p>위 코드는 "GET /foo" 만 처리하고 "GET /foo/" 는 HTTP 404 에러를 발생시킵니다.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_spring_security_변경_내용"><a class="anchor" href="#_spring_security_변경_내용"></a>1.5. Spring Security 변경 내용</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Spring Boot 3 은 <strong>Spring Security 6</strong> 을 사용합니다.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Security 설정이 Lambda dsl 방식으로 변경 되었습니다.</p>
-</div>
-<div class="exampleblock">
-<div class="title">Example 3. Security 기존 설정 방식</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-                .antMatchers("/blog/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-            .formLogin()
-                .loginPage("/login")
-                .permitAll()
-                .and()
-            .rememberMe();
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="exampleblock">
-<div class="title">Example 4. Security lambda 방식 설정</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests(authorizeRequests -&gt;
-                authorizeRequests
-                    .antMatchers("/blog/**").permitAll()
-                    .anyRequest().authenticated()
-            )
-            .formLogin(formLogin -&gt;
-                formLogin
-                    .loginPage("/login")
-                    .permitAll()
-            )
-            .rememberMe(withDefaults());
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_spring_data_jpa_변경_내용"><a class="anchor" href="#_spring_data_jpa_변경_내용"></a>1.6. Spring Data Jpa 변경 내용</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="ulist">
-<ul>
-<li>
-<p>Spring Boot 3.0 은 <strong>Hibernate 6.1</strong> 을 사용합니다.</p>
-</li>
-<li>
-<p>Spring Boot 3.1 은 <strong>Hibernate 6.2</strong> 를 사용합니다.</p>
-</li>
-</ul>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Hibernate 변경 사항은 Hibernate Migration Guide 를 참고하세요.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://docs.jboss.org/hibernate/orm/6.2/migration-guide/migration-guide.html">Hibernate 6.2 Migration Guide</a></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_migrate_to_spring_boot_3_2"><a class="anchor" href="#_migrate_to_spring_boot_3_2"></a>2. Migrate to Spring Boot 3.2</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_참고_자료_2"><a class="anchor" href="#_참고_자료_2"></a>2.1. 참고 자료</h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes">Spring Boot 3.2 Release Notes</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_parameter_name_discovery"><a class="anchor" href="#_parameter_name_discovery"></a>2.2. Parameter Name Discovery</h3>
-<div class="paragraph">
-<p>Spring Boot 3.2 는 더 이상 바이트코드를 구문 분석하여 parameter 이름을 추론하지 않습니다.
-의존성 주입, 속성 바인딩, SpEL 표현식, 또는 파라미터의 이름에 의존하는 다른 사용 사례들에서 문제를 겪는다면, StandardReflectionParameterNameDiscoverer 와 호환을 위해 파라미터 이름 보존을 위한 일반적인 Java 8+ <code>-parameters</code> 플래그로 자바 소스를 컴파일해야 합니다.</p>
-</div>
-<div class="exampleblock">
-<div class="title">Example 5. build.gradle</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs.add("-parameters")
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>IntelliJ IDEA 를 사용한다면 <span class="menuseq"><b class="menu">File</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Settings</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Build Execution Deployment</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Compiler</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Java Compiler</b></span> 에서 Additional command line parameters : <code>-parameters</code> 추가하여 옵션 설정이 가능합니다.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-6.x#parameter-name-retention">Parameter Name Retention</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_spring_data_jpa_변경_내용_2"><a class="anchor" href="#_spring_data_jpa_변경_내용_2"></a>2.3. Spring Data Jpa 변경 내용</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Spring Boot 3.2 은 <strong>Hibernate 6.4</strong> 을 사용합니다.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Hibernate 변경 사항은 Hibernate Migration Guide 를 참고하세요.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://docs.jboss.org/hibernate/orm/6.4/migration-guide/migration-guide.html">Hibernate 6.4 Migration Guide</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>특히 Hibernate 6.4 부터는 <a href="https://docs.jboss.org/hibernate/orm/6.4/dialect/dialect.html">지원하는 방언(Dialect)</a> 버전이 많이 상향 되었습니다.
-Oracle 19.0, MySQL 8.0 부터 사용 가능합니다.</p>
 </div>
 </div>
 </div>
@@ -1744,7 +1532,7 @@ Oracle 19.0, MySQL 8.0 부터 사용 가능합니다.</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2024-01-12 17:50:55 +0900
+Last updated 2024-01-09 14:37:05 +0900
 </div>
 </div>
 </body>
