@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Writing on development and other interested things.</title>
+<title>Spring REST Docs</title>
 <style>
 
 html {
@@ -1337,54 +1337,483 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
-<h1>Writing on development and other interested things.</h1>
-<div class="details">
-<span id="revnumber">version 1.0</span>
-</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_spring_boot">1. Spring Boot</a>
+<li><a href="#_spring_rest_docs">1. Spring REST Docs</a>
 <ul class="sectlevel2">
-<li><a href="#_migrate_to_spring_boot_3">1.1. Migrate to Spring Boot 3</a></li>
-<li><a href="#_spring_rest_docs">1.2. Spring REST Docs</a></li>
-</ul>
-</li>
-<li><a href="#_spring_data">2. Spring Data</a>
-<ul class="sectlevel2">
-<li><a href="#_soft_delete">2.1. Soft Delete</a></li>
+<li><a href="#_참고_자료">1.1. 참고 자료</a></li>
+<li><a href="#_개요">1.2. 개요</a></li>
+<li><a href="#_빌드_구성_하기">1.3. 빌드 구성 하기</a></li>
+<li><a href="#_문서_패키징_하기">1.4. 문서 패키징 하기</a></li>
+<li><a href="#_스니펫_생성하기">1.5. 스니펫 생성하기</a></li>
+<li><a href="#_스니펫_사용하기">1.6. 스니펫 사용하기</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
+<div class="sect1">
+<h2 id="_spring_rest_docs"><a class="anchor" href="#_spring_rest_docs"></a>1. Spring REST Docs</h2>
 <div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Spring Rest Docs 3.0.1 버전 기준으로 작성되었다.</p>
+</li>
+<li>
+<p>Spring Boot 3.2.1 기준으로 작성되었다. (3.x 버전 문제 없음)</p>
+</li>
+<li>
+<p>Gradle 기준으로 작성되었다.
+(Maven 은 일부 설정 다름)</p>
+</li>
+<li>
+<p>JUnit5 기준으로 작성되었다.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>개발 및 기타 관심 사항에 대해 글을 씁니다.</p>
+<p>시작하기 전 해당 문서에 사용하는 용어를 정리한다.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="dlist unordered stack">
+<dl>
+<dt>스니펫 (Snippet)</dt>
+<dd>
+<p>문서를 생성하기 위해 테스트를 실행하면서 생성된 파일들을 의미한다.</p>
+</dd>
+<dt>문서 (Document)</dt>
+<dd>
+<p>최종 생성 완료된 문서(HTML 파일)를 의미한다.<br>
+생성된 스니펫을 활용하면 문서를 생성한다.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_spring_boot"><a class="anchor" href="#_spring_boot"></a>1. Spring Boot</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="_migrate_to_spring_boot_3"><a class="anchor" href="#_migrate_to_spring_boot_3"></a>1.1. <a href="./springboot/01-migrate-to-springboot3.html">Migrate to Spring Boot 3</a></h3>
-
+<h3 id="_참고_자료"><a class="anchor" href="#_참고_자료"></a>1.1. 참고 자료</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.spring.io/spring-restdocs/docs/current/reference/htmlsingle/#getting-started">Spring REST Docs</a></p>
+</li>
+<li>
+<p><a href="https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference">AsciiDoc Quick Reference</a></p>
+</li>
+<li>
+<p><a href="https://jaehun2841.github.io/2019/08/04/2019-08-04-spring-rest-docs">Spring Rest Docs를 이용한 API 문서 만들기</a></p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_spring_rest_docs"><a class="anchor" href="#_spring_rest_docs"></a>1.2. <a href="./springboot/02-rest-docs.html">Spring REST Docs</a></h3>
-
+<h3 id="_개요"><a class="anchor" href="#_개요"></a>1.2. 개요</h3>
+<div class="paragraph">
+<p>Spring REST Docs 의 목적은 RESTful 서비스에 대한 정확하고 읽기 쉬운 문서를 생성하도록 돕는 것이다.</p>
+</div>
+<div class="paragraph">
+<p>고품질의 문서를 작성하는 것은 어렵다.
+이러한 어려움을 해결하기 위한 방법은 작업에 적합한 도구를 사용하는 것이다.
+이를 위해 Spring REST Docs 에서는 기본적으로 <a href="https://asciidoctor.org/">Asciidoctor</a> 를 사용한다.
+Asciidoctor 는 일반 텍스트를 처리하고 필요에 맞게 스타일과 레이아웃을 갖춘 HTML 을 생성한다.</p>
+</div>
+<div class="paragraph">
+<p>Spring REST Docs 는 테스트를 기반으로 문서를 생성한다.
+테스트는 API 의 기대되는 동작을 정의하고, 테스트가 실행되면서 API 가 실제로 동작하는 방식을 문서화한다.
+테스트 기반 접근 방식은 서비스 문서의 정확성을 보장하는데 도움이 된다.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_spring_data"><a class="anchor" href="#_spring_data"></a>2. Spring Data</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="_soft_delete"><a class="anchor" href="#_soft_delete"></a>2.1. <a href="./springdata/01-soft-delete.html">Soft Delete</a></h3>
+<h3 id="_빌드_구성_하기"><a class="anchor" href="#_빌드_구성_하기"></a>1.3. 빌드 구성 하기</h3>
+<div class="paragraph">
+<p>Spring REST Docs 사용하기 위해 build.gradle 파일에 설정한다.
+구성의 주요 부분은 다음 목록에 설명되어 있다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-gradle" data-lang="gradle">plugins { <i class="conum" data-value="1"></i><b>(1)</b>
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
+}
 
+configurations {
+	asciidoctorExt <i class="conum" data-value="2"></i><b>(2)</b>
+}
+
+dependencies {
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor:{project-version}' <i class="conum" data-value="3"></i><b>(3)</b>
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:{project-version}' <i class="conum" data-value="4"></i><b>(4)</b>
+}
+
+
+ext { <i class="conum" data-value="5"></i><b>(5)</b>
+    snippetsDir = file('build/generated-snippets')
+}
+
+test { <i class="conum" data-value="6"></i><b>(6)</b>
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+}
+
+asciidoctor { <i class="conum" data-value="7"></i><b>(7)</b>
+    inputs.dir snippetsDir <i class="conum" data-value="8"></i><b>(8)</b>
+    configurations 'asciidoctorExt' <i class="conum" data-value="9"></i><b>(9)</b>
+
+    baseDirFollowsSourceFile() <i class="conum" data-value="10"></i><b>(10)</b>
+
+    dependsOn test <i class="conum" data-value="11"></i><b>(11)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Asciidoctor 플러그인을 적용.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Asciidoctor 확장을 위한 구성을 정의.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Spring REST Docs 의 Asciidoctor 확장을 의존성으로 추가.<br>
+asciidoctorExt 에 spring-restdocs-asciidoctor 의존성을 추가하면, .adoc 파일을 사용하는 snippet 파일들을 build/generated-snippets 디렉토리에 연결한다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Spring REST Docs 의 MockMvc 테스트 지원을 의존성으로 추가.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Snippet 파일들을 생성할 디렉토리를 정의.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>테스트 결과로 생성된 snippet 파일들을 snippet 디렉토리에 저장.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Asciidoctor 태스크를 정의.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Asciidoctor 태스크의 입력 디렉토리를 snippet 디렉토리로 설정.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Asciidoctor 확장을 사용하기 위해 asciidoctorExt 구성을 사용.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Asciidoctor 태스크의 기본 디렉토리를 소스 디렉토리로 설정.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Asciidoctor 태스크가 실행되기 전에 테스트를 실행.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_문서_패키징_하기"><a class="anchor" href="#_문서_패키징_하기"></a>1.4. 문서 패키징 하기</h3>
+<div class="paragraph">
+<p>생성 완료된 문서를 jar 파일에 패키징을 하기 위해 build.gradle 파일에 다음과 같이 설정한다.<br>
+(정적 문서를 서빙 하기 위해 jar 파일에 문서를 포함시키는 것이다.)</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>jar 파일 생선 전에 문서를 생성한다.</p>
+</li>
+<li>
+<p>문서를 생성한 후에 jar 파일을 생성한다.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-gradle" data-lang="gradle">bootJar {
+    dependsOn asciidoctor <i class="conum" data-value="1"></i><b>(1)</b>
+
+    from("${asciidoctor.outputDir}") { <i class="conum" data-value="2"></i><b>(2)</b>
+        into 'static/docs'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>bootJar 태스크가 실행되기 전에 asciidoctor 태스크를 실행.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>asciidoctor 태스크의 출력 디렉토리를 bootJar 태스크의 입력 디렉토리로 설정.<br>
+asciidoctor 태스크의 출력 디렉토리의 파일들을 bootJar 태스크의 출력 디렉토리의 static/docs 디렉토리로 복사.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>추가적으로 local 환경에서 문서를 확인하기 위해 다음과 같이 설정한다.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>문서를 생성한 후에 resources/static 디렉토리에 문서를 복사한다.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-gradle" data-lang="gradle">tasks.register('copyDocument', Copy) { <i class="conum" data-value="1"></i><b>(1)</b>
+    dependsOn asciidoctor <i class="conum" data-value="2"></i><b>(2)</b>
+
+    from file("build/docs/asciidoc") <i class="conum" data-value="3"></i><b>(3)</b>
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>copyDocument 라는 이름의 태스크를 정의.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>copyDocument 태스크가 실행되기 전에 asciidoctor 태스크를 실행.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>asciidoctor 태스크의 출력 디렉토리의 파일들을 copyDocument 태스크의 출력 디렉토리의 static/docs 디렉토리로 복사.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>build 태스크가 실행되기 전에 copyDocument 태스크를 실행.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_스니펫_생성하기"><a class="anchor" href="#_스니펫_생성하기"></a>1.5. 스니펫 생성하기</h3>
+<div class="paragraph">
+<p>Spring REST Docs 는 테스트를 기반으로 스니펫을 생성하기에 테스트 환경을 구성해야 한다.</p>
+</div>
+<div class="sect3">
+<h4 id="_테스트_설정하기"><a class="anchor" href="#_테스트_설정하기"></a>테스트 설정하기</h4>
+<div class="paragraph">
+<p>먼저 테스트 클래스에 <code>RestDocumentationExtension</code> 을 확장으로 추가한다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@ExtendWith(RestDocumentationExtension.class)
+public abstract class RestDocsSupport {
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>RestDocumentationExtension 는 프로젝트의 빌드 도구를 기반으로 출력 디렉터리가 자동으로 구성된다.<br>
+Gradle 을 사용하는 경우 <code>build/generated-snippets</code> 디렉토리에 snippet 파일들이 생성된다.</p>
+</div>
+<div class="paragraph">
+<p>다음으로, MockMvc 를 설정하기 위해 <code>@BeforeEach</code> 메서드를 추가한다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">protected          MockMvc mockMvc;
+protected          RestDocumentationResultHandler restDocs = write();
+protected abstract Object initController(); <i class="conum" data-value="1"></i><b>(1)</b>
+
+@BeforeEach
+void setUp(RestDocumentationContextProvider provider) {
+
+    this.mockMvc = MockMvcBuilders
+            .standaloneSetup(initController()) <i class="conum" data-value="2"></i><b>(2)</b>
+            .addFilters(new CharacterEncodingFilter(UTF_8.name(), true)) <i class="conum" data-value="3"></i><b>(3)</b>
+            .apply(MockMvcRestDocumentation.documentationConfiguration(provider)) <i class="conum" data-value="4"></i><b>(4)</b>
+            .alwaysDo(print())
+            .alwaysDo(restDocs)
+            .build();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>테스트 클래스에서 MockMvc 를 사용하기 위해 Controller 를 생성하는 메서드를 정의한다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>MockMvc 를 Controller 로 설정한다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>MockMvc 에서 한글이 깨지지 않도록 필터를 추가한다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>MockMvcRestDocumentation.documentationConfiguration() 메서드를 사용하여 MockMvc 를 설정한다.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>추가적으로 스니펫 생성시 처리할 내용을 정의하기 위해 다음과 같이 설정한다.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>스니펫 파일 이름을 설정한다.</p>
+</li>
+<li>
+<p>기타 부가 설정한다.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">protected          MockMvc mockMvc;
+protected          RestDocumentationResultHandler restDocs = write();
+protected abstract Object initController();
+
+private RestDocumentationResultHandler write() {
+    return MockMvcRestDocumentation.document(
+            "{class-name}/{method-name}", <i class="conum" data-value="1"></i><b>(1)</b>
+            Preprocessors.preprocessRequest(Preprocessors.prettyPrint()), <i class="conum" data-value="2"></i><b>(2)</b>
+            Preprocessors.preprocessResponse(Preprocessors.prettyPrint()) <i class="conum" data-value="3"></i><b>(3)</b>
+    );
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>스니펫 파일 이름을 설정.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>요청에 대한 스니펫을 prettyPrint 하기 위한 설정.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>응답에 대한 스니펫을 prettyPrint 하기 위한 설정.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>세부적인 설정은 <a href="https://docs.spring.io/spring-restdocs/docs/current/reference/htmlsingle/#configuration">공식 문서의 설정</a> 부분을 참고한다.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_restful_서비스_호출하기"><a class="anchor" href="#_restful_서비스_호출하기"></a>RESTful 서비스 호출하기</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">this.mockMvc.perform(get("/").accept(MediaType.APPLICATION_JSON)) <i class="conum" data-value="1"></i><b>(1)</b>
+	.andExpect(status().isOk()) <i class="conum" data-value="2"></i><b>(2)</b>
+	.andDo(document("index")); <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>GET 메서드로 "/" URL 을 호출하고, "application/json" 응답이 필요다는 것을 명시한다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>응답의 상태 코드를 명시한다.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>스니펫을 생성한다.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>테스트를 실행하면, build/generated-snippets/index 디렉토리에 기본으로 6개의 스니펫 생성된다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>&lt;output-directory&gt;/index/curl-request.adoc</code></p>
+</li>
+<li>
+<p><code>&lt;output-directory&gt;/index/http-request.adoc</code></p>
+</li>
+<li>
+<p><code>&lt;output-directory&gt;/index/http-response.adoc</code></p>
+</li>
+<li>
+<p><code>&lt;output-directory&gt;/index/httpie-request.adoc</code></p>
+</li>
+<li>
+<p><code>&lt;output-directory&gt;/index/request-body.adoc</code></p>
+</li>
+<li>
+<p><code>&lt;output-directory&gt;/index/response-body.adoc</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_스니펫_사용하기"><a class="anchor" href="#_스니펫_사용하기"></a>1.6. 스니펫 사용하기</h3>
+<div class="paragraph">
+<p>생성된 스니펫을 사용하기 위해서는 .adoc 파일이 필요하다.
+파일명은 suffix 가 <code>.adoc</code> 이면 무관하다.
+최종 HTML 문서는 adoc 파일과 동일한 파일명을 가진 suffix 가 <code>.html</code> 인 파일이 생성된다.</p>
+</div>
+<div class="paragraph">
+<p>문서 생성을 위한 .adoc 파일과 생성된 HTML 파일의 위치는 다음과 같다.</p>
+</div>
+<table class="tableblock frame-all grid-all stripes-hover stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">.adoc 소스 파일</th>
+<th class="tableblock halign-left valign-top">.html 생성 파일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>src/docs/asciidoc/*.adoc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>build/docs/asciidoc/*.html</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>스니펫 출력 디렉터리를 참조하기 위해 빌드 구성에서 snippets 자동으로 설정되는 속성을 사용할 수 있다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-adoc" data-lang="adoc">include::{snippets}/index/curl-request.adoc[]</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1392,7 +1821,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2024-01-14 14:12:00 +0900
+Last updated 2024-01-14 14:11:13 +0900
 </div>
 </div>
 </body>
